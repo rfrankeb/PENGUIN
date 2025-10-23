@@ -1,129 +1,158 @@
-# PENGUIN - WSB Proof of Concept
+# 🐧 PENGUIN
+**Portfolio Evaluation Network with Global Updates, Insights, and Navigation**
 
-This is a proof-of-concept script that demonstrates the core functionality of the PENGUIN system by scraping r/wallstreetbets.
+AI-powered stock analysis platform that aggregates data from thousands of sources to identify investment opportunities before they become mainstream.
 
-## Quick Start
+[![GitHub](https://img.shields.io/badge/GitHub-rfrankeb%2FPENGUIN-blue)](https://github.com/rfrankeb/PENGUIN)
 
-### 1. Install Dependencies
+## 🎯 Project Vision
 
+PENGUIN detects emerging stock trends (short squeezes, momentum shifts, insider movements) by synthesizing diverse data signals through Claude AI. The core premise: catch opportunities like the BYND short squeeze *before* they go mainstream by monitoring social sentiment, options flow, congressional trading, and more.
+
+## 📁 Project Structure
+
+```
+PENGUIN/
+├── testing/              # Proof-of-concept scripts
+│   ├── reddit_poc/       # Reddit WSB scraper ✅
+│   └── yahoo_poc/        # Yahoo Finance scraper ✅
+├── src/                  # Main application (under development)
+├── CLAUDE.md             # Complete architecture & roadmap (1863 lines)
+├── requirements.txt      # Root dependencies
+└── README.md             # This file
+```
+
+## 🚀 Quick Start - Test the PoCs
+
+### Reddit WSB Scraper
 ```bash
+cd testing/reddit_poc
 pip install -r requirements.txt
-```
 
-### 2. Get Reddit API Credentials
-
-1. Go to https://www.reddit.com/prefs/apps
-2. Click "Create App" or "Create Another App"
-3. Fill in:
-   - **name**: PENGUIN (or anything)
-   - **App type**: Select "script"
-   - **description**: Stock tracking app
-   - **redirect uri**: http://localhost:8080
-4. Click "Create app"
-5. Copy your credentials:
-   - **client_id**: The string under "personal use script"
-   - **client_secret**: The "secret" field
-
-### 3. Set Environment Variables
-
-**Option A: Environment Variables (Recommended)**
-```bash
+# Get Reddit API credentials from https://www.reddit.com/prefs/apps
 export REDDIT_CLIENT_ID='your_client_id'
-export REDDIT_CLIENT_SECRET='your_client_secret'
+export REDDIT_CLIENT_SECRET='your_secret'
+
+python wsb_scraper.py
 ```
 
-**Option B: Edit the Script Directly**
-Open `testing.py` and replace the placeholder values on lines 16-17.
+**Output:** Trending stocks from r/wallstreetbets with sentiment analysis and momentum signals.
 
-### 4. Run the Script
-
+### Yahoo Finance Scraper (No API Key!)
 ```bash
-python testing.py
+cd testing/yahoo_poc
+pip install -r requirements.txt
+python yahoo_scraper.py
 ```
 
-## What It Does
+**Output:** Real-time stock data with technical indicators (SMA, RSI) and trading signals.
 
-The script will:
+## 🏗️ Architecture Overview
 
-1. **Connect to Reddit** using PRAW (Python Reddit API Wrapper)
-2. **Fetch the top 100 hot posts** from r/wallstreetbets
-3. **Extract stock tickers** mentioned in titles and post bodies
-4. **Analyze sentiment** (bullish/bearish/neutral) using keyword matching
-5. **Count mentions** and calculate engagement metrics
-6. **Generate a report** showing:
-   - Top trending stocks by mention count
-   - Sentiment breakdown for each stock
-   - Momentum signals for high-activity stocks
-   - Top posts for each ticker
+PENGUIN uses a **plugin-based architecture** supporting unlimited data sources:
 
-## Sample Output
+### Data Sources (Planned: 1000+)
+- **Social Sentiment**: Reddit (50+ subs), Twitter, StockTwits, Discord
+- **News & Media**: Bloomberg, Reuters, WSJ, Benzinga (200+ sources)
+- **Insider Trading**: Congressional trades, SEC Form 4, 13F filings
+- **Options Flow**: Unusual Whales, FlowAlgo, dark pool data
+- **Technical**: 200+ indicators (RSI, MACD, Bollinger Bands, etc.)
+- **Fundamental**: Earnings, financials, analyst ratings
+- **Alternative**: Web traffic, satellite imagery, credit card data
+- **Macro**: Economic indicators, Fed data, sector rotation
 
-```
-r/WALLSTREETBETS ANALYSIS REPORT
-======================================================================
-Analysis Time: 2025-01-15 14:30:00
-Total Posts Analyzed: 95
-Unique Tickers Found: 127
+### AI Analysis Layer
+Claude AI synthesizes multi-source signals to generate:
+- Investment theses with supporting evidence
+- Confidence scoring (0-100)
+- Risk assessment
+- Entry/exit strategies
+- Time horizon recommendations
 
-----------------------------------------------------------------------
-TOP TRENDING STOCKS (Min 3 mentions)
-----------------------------------------------------------------------
+See **[CLAUDE.md](./CLAUDE.md)** for the complete 1800+ line architecture document.
 
-1. $TSLA
-   Mentions: 12
-   Avg Score: 245.3 upvotes
-   Sentiment: 🚀 BULLISH (75% bull / 17% bear)
-   Total Comments: 3,421
-   Top Post: "TSLA calls printing after Cybertruck delivery beat..." (892 upvotes)
+## 📊 Proof-of-Concept Results
 
-2. $GME
-   Mentions: 8
-   Avg Score: 312.5 upvotes
-   Sentiment: 🚀 BULLISH (88% bull / 0% bear)
-   Total Comments: 2,156
-   ...
-```
+### ✅ Reddit WSB Scraper
+- Extracts stock tickers from posts
+- Sentiment analysis (bullish/bearish/neutral)
+- Mention counting and trending detection
+- **Use case**: Detected BYND early via WSB momentum
 
-## What This Proves
+### ✅ Yahoo Finance Scraper
+- Real-time price data
+- Technical indicators (SMA, RSI)
+- Momentum calculations
+- Volume spike detection
 
-This proof-of-concept validates:
+## 🗺️ Roadmap
 
-✅ **Reddit API Integration**: Successfully connects and fetches data
-✅ **Ticker Extraction**: Identifies stock symbols from unstructured text
-✅ **Sentiment Analysis**: Basic bullish/bearish detection
-✅ **Mention Tracking**: Counts and ranks stocks by activity
-✅ **Momentum Detection**: Identifies spikes in mentions
+### Phase 1: Foundation (Weeks 1-2) - *In Progress*
+- [x] Reddit PoC validation
+- [x] Yahoo Finance PoC validation
+- [ ] Set up PostgreSQL + TimescaleDB
+- [ ] Implement BaseCollector interface
+- [ ] Create plugin registry
 
-## Next Steps
+### Phase 2: Signal Detection (Weeks 3-4)
+- [ ] MomentumSpikeDetector
+- [ ] Technical indicators integration
+- [ ] Signal aggregation
+- [ ] CLI: `penguin scan`
 
-This is exactly what we'll build into Phase 1 of PENGUIN, but with:
+### Phase 3: AI Integration (Weeks 5-6)
+- [ ] Claude API client
+- [ ] Multi-signal synthesis
+- [ ] Recommendation generation
+- [ ] Database storage
 
-- **Persistent storage** (TimescaleDB for time-series data)
-- **Historical tracking** (detect mention velocity changes)
-- **Claude AI integration** (sophisticated analysis)
-- **Multiple data sources** (Twitter, StockTwits, etc.)
-- **Real-time monitoring** (WebSocket streams)
-- **Alert system** (notify on momentum spikes)
+### Phase 4-6: See CLAUDE.md for full roadmap
 
-## Troubleshooting
+## 🛠️ Technology Stack
 
-**"Import praw could not be resolved"**
-```bash
-pip install praw
-```
+**Backend:** Python, FastAPI, Celery
+**Databases:** PostgreSQL, TimescaleDB, Redis
+**AI:** Anthropic Claude API
+**Data Sources:** PRAW, yfinance, Alpha Vantage, QuiverQuant
+**Analysis:** TA-Lib, pandas, scikit-learn
 
-**"Invalid credentials"**
-- Double-check your client_id and client_secret
-- Make sure there are no extra spaces
-- Verify the app type is "script" in Reddit settings
+## 📖 Documentation
 
-**"Forbidden" or "403 error"**
-- Check your user agent string
-- Make sure you're not making too many requests (rate limit: 60/min)
+- **[CLAUDE.md](./CLAUDE.md)** - Complete architecture & implementation guide
+- **[testing/README.md](./testing/README.md)** - Proof-of-concept documentation
+- **[GITHUB_SETUP.md](./GITHUB_SETUP.md)** - Git workflow & collaboration
+- **[QUICKSTART.md](./QUICKSTART.md)** - Quick reference guide
 
-## Notes
+## 🔐 Security
 
-- Reddit API has a rate limit of ~60 requests per minute
-- Some tickers may be false positives (common words that are also tickers)
-- Sentiment analysis is basic; Claude AI will make this much more sophisticated
-- This script doesn't store data; it's just a snapshot of current activity
+- API keys stored in `.env` (never committed to git)
+- `.gitignore` configured to protect secrets
+- Reddit API credentials required (free)
+- Yahoo Finance requires no API key
+
+## 🤝 Contributing
+
+This is currently a solo project, but contributions welcome once MVP is complete!
+
+## 📝 License
+
+MIT License - See LICENSE file for details
+
+## 🎓 Learning Resources
+
+This project demonstrates:
+- Plugin-based architecture design
+- Multi-source data aggregation
+- AI-powered analysis (Claude)
+- Financial data APIs (Reddit, Yahoo Finance)
+- Time-series database usage (TimescaleDB)
+- Sentiment analysis & NLP
+- Technical indicator calculations
+
+## ⚠️ Disclaimer
+
+**NOT FINANCIAL ADVICE.** This is an educational project for learning about data aggregation, AI analysis, and software architecture. Always do your own research before making investment decisions.
+
+---
+
+**Built with Claude Code** | [Documentation](./CLAUDE.md) | [GitHub](https://github.com/rfrankeb/PENGUIN)
