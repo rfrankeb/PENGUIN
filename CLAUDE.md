@@ -191,9 +191,7 @@ class DataSourceRegistry:
 - r/investing
 - r/options
 - r/Daytrading
-- r/SecurityAnalysis
 - r/ValueInvesting
-- r/Dividends
 - r/StockMarket
 - r/RobinHood
 - r/Crypto_General
@@ -201,6 +199,7 @@ class DataSourceRegistry:
 - r/Shortsqueeze
 - r/SPAC
 - r/thetagang
+- r/SecurityAnalysis
 - r/Vitards (materials/steel)
 - r/EV_Stocks
 - r/Biotech_Stocks

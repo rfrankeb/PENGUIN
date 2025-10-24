@@ -76,13 +76,14 @@ class MultiSubredditScraper:
             'SAME', 'SEE', 'SEEM', 'SHOULD', 'SINCE', 'STILL', 'TAKE',
             'THAN', 'THEM', 'THEN', 'THERE', 'THEY', 'THIS', 'THUS',
             'VERY', 'WANT', 'WELL', 'WERE', 'WHAT', 'WHEN', 'WHERE',
-            'WHICH', 'WHILE', 'WOULD', 'YEAR', 'YOUR',
+            'WHICH', 'WHILE', 'WOULD', 'YEAR', 'YOUR','COVID', 'USA',
             # Financial terms
             'ROI', 'ROE', 'FCF', 'EBITDA', 'YOY', 'QOQ', 'ATM', 'OTM', 'ITM',
-            'DIV', 'YTD', 'USD', 'EUR', 'GBP', 'JPY', 'RMB',
+            'DIV', 'YTD', 'USD', 'EUR', 'GBP', 'JPY', 'RMB', 'IRA', 'PT',
             # Reddit/Internet slang
             'AMA', 'ELI5', 'TIL', 'NSFW', 'SFW', 'OP', 'OC', 'FTFY',
-            'IIRC', 'AFAIK', 'IMHO', 'IMO', 'SMH', 'TBH', 'LPT'
+            'IIRC', 'AFAIK', 'IMHO', 'IMO', 'SMH', 'TBH', 'LPT', 'EV',
+            'UP'
         }
 
     def extract_tickers(self, text: str) -> List[str]:
@@ -299,11 +300,82 @@ class MultiSubredditScraper:
         print()
         print("✓ Analysis complete!")
         print()
-        print("📊 This aggregated analysis demonstrates:")
-        print("  - Multi-subreddit stock mention tracking")
-        print("  - Cross-community sentiment analysis")
-        print("  - Momentum scoring with subreddit diversity weighting")
-        print("  - Comprehensive data aggregation")
+
+    def print_summary_metrics(self, all_posts: List[Dict], top_stocks: List[Dict]):
+        """Print summary metrics about the scraping session"""
+        print("=" * 70)
+        print("📊 SUMMARY METRICS")
+        print("=" * 70)
+        print()
+
+        # Calculate metrics
+        total_posts = len(all_posts)
+        total_stocks = len(top_stocks)
+        total_mentions = sum(stock['mentions'] for stock in top_stocks)
+        total_upvotes = sum(post['score'] for post in all_posts)
+        total_comments = sum(post['num_comments'] for post in all_posts)
+
+        # Sentiment breakdown
+        bullish_posts = sum(1 for post in all_posts if post['sentiment'] == 'bullish')
+        bearish_posts = sum(1 for post in all_posts if post['sentiment'] == 'bearish')
+        neutral_posts = sum(1 for post in all_posts if post['sentiment'] == 'neutral')
+
+        # Stocks by sentiment
+        highly_bullish = [s for s in top_stocks if s['bullish_pct'] >= 70]
+        highly_bearish = [s for s in top_stocks if s['bearish_pct'] >= 70]
+
+        # Subreddit distribution
+        subreddit_post_counts = defaultdict(int)
+        for post in all_posts:
+            subreddit_post_counts[post['subreddit']] += 1
+
+        # Top mentioned stocks
+        top_5_stocks = top_stocks[:5]
+
+        # Cross-subreddit stocks (mentioned in 5+ subreddits)
+        cross_subreddit = [s for s in top_stocks if s['subreddit_count'] >= 5]
+
+        print("📈 DATA COLLECTION:")
+        print(f"   Total Posts Scraped: {total_posts:,}")
+        print(f"   Total Stock Mentions: {total_mentions:,}")
+        print(f"   Unique Stocks Found: {total_stocks:,}")
+        print(f"   Total Upvotes: {total_upvotes:,}")
+        print(f"   Total Comments: {total_comments:,}")
+        print()
+
+        print("🎭 SENTIMENT DISTRIBUTION:")
+        print(f"   Bullish Posts: {bullish_posts} ({bullish_posts/total_posts*100:.1f}%)")
+        print(f"   Bearish Posts: {bearish_posts} ({bearish_posts/total_posts*100:.1f}%)")
+        print(f"   Neutral Posts: {neutral_posts} ({neutral_posts/total_posts*100:.1f}%)")
+        print()
+        print(f"   Highly Bullish Stocks (≥70%): {len(highly_bullish)}")
+        print(f"   Highly Bearish Stocks (≥70%): {len(highly_bearish)}")
+        print()
+
+        print("🌐 SUBREDDIT BREAKDOWN:")
+        for subreddit, count in sorted(subreddit_post_counts.items(), key=lambda x: x[1], reverse=True):
+            print(f"   r/{subreddit}: {count} posts")
+        print()
+
+        print("🔥 TOP 5 MOST MENTIONED:")
+        for idx, stock in enumerate(top_5_stocks, 1):
+            print(f"   {idx}. ${stock['ticker']}: {stock['mentions']} mentions, {stock['bullish_pct']:.0f}% bullish")
+        print()
+
+        print("🌍 CROSS-SUBREDDIT TRENDING:")
+        print(f"   Stocks mentioned in 5+ subreddits: {len(cross_subreddit)}")
+        if cross_subreddit:
+            for stock in cross_subreddit[:5]:
+                print(f"   ${stock['ticker']}: {stock['subreddit_count']} subreddits, momentum: {stock['momentum_score']:.0f}")
+        print()
+
+        print("=" * 70)
+        print()
+        print("💡 KEY INSIGHTS:")
+        print("  ✓ Multi-subreddit stock mention tracking")
+        print("  ✓ Cross-community sentiment analysis")
+        print("  ✓ Momentum scoring with subreddit diversity weighting")
+        print("  ✓ Comprehensive data aggregation across investment communities")
         print()
 
 
@@ -329,6 +401,9 @@ def main():
 
     # Print report
     scraper.print_report(top_stocks, top_n=10)
+
+    # Print summary metrics
+    scraper.print_summary_metrics(all_posts, top_stocks)
 
     print("Next steps: Integrate with Yahoo Finance for price data,")
     print("add Claude AI analysis, and build momentum detection signals!")
