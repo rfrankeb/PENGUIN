@@ -1,6 +1,7 @@
 """
 Proof of Concept: r/wallstreetbets Reddit Scraper
 Combs through top posts to extract stock mentions and sentiment
+combs thru 100 posts, lists top 20 stocks and their momentum
 """
 
 import praw
@@ -8,6 +9,10 @@ import re
 from datetime import datetime
 import os
 from typing import List, Dict, Tuple
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Reddit API credentials (you'll need to create these)
 # Visit https://www.reddit.com/prefs/apps to create an app
