@@ -1,1 +1,33 @@
+# Reddit API
 praw==7.7.1
+
+# Yahoo Finance
+yfinance==0.2.40
+
+# Database
+sqlalchemy==2.0.31
+psycopg2-binary==2.9.9
+alembic==1.13.2
+
+# Async support
+aiohttp==3.9.5
+asyncio-mqtt==0.16.2
+
+# CLI
+click==8.1.7
+
+# Data processing
+pandas>=2.3.2
+numpy>=1.26.4
+pandas-ta==0.4.71b0
+scipy==1.16.2
+
+# Utilities
+python-dotenv==1.0.1
+requests==2.32.3
+beautifulsoup4==4.12.3
+
+# Testing
+pytest==8.2.2
+pytest-asyncio==0.23.7
+pytest-cov==5.0.0
